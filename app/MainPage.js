@@ -1,6 +1,15 @@
 import React from 'react';
 
-import { ActivityIndicator, ListView, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  ListView,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+  ToastAndroid,
+  TouchableNativeFeedback
+} from 'react-native';
 import { primary_text_dark_color, divider_color, secondary_text_color } from "./color_palette";
 import { fetchGankCategoryList } from "./gankApi";
 
@@ -51,7 +60,7 @@ class MainPage extends React.Component {
           <RefreshControl refreshing={this.state.refreshing}
                           onRefresh={this._onRefresh.bind(this)}/>)}
                   dataSource={this.state.dataSource}
-                  renderRow={this._renderRow}
+                  renderRow={this._renderRow.bind(this)}
                   renderFooter={this._renderFooter.bind(this)}
                   renderSeparator={(sectionId, rowId) => {
                     return <View key={rowId} style={styles.divider}/>
@@ -107,22 +116,25 @@ class MainPage extends React.Component {
 
   _renderRow(rowData) {
     return (
-      <View style={{ padding: 10 }}>
-        <Text
-          numberOfLines={2}
-          fontWeight="bold"
-          ellipsizeMode="tail"
-          style={styles.row}>
-          {rowData.desc}
-        </Text>
-        <View style={{
-          flex: 1,
-          flexDirection: 'row'
-        }}>
-          <Text style={[styles.desc, { marginRight: rowData.who ? 15 : 0 }]}>{rowData.who}</Text>
-          <Text style={styles.desc}>{rowData.publishedAt && rowData.publishedAt.slice(0, 10)}</Text>
+      <TouchableNativeFeedback onPress={this._onItemClick.bind(this, rowData)}>
+        <View style={{ padding: 10 }}>
+          <Text
+            numberOfLines={2}
+            fontWeight="bold"
+            ellipsizeMode="tail"
+            style={styles.row}>
+            {rowData.desc}
+          </Text>
+          <View style={{
+            flex: 1,
+            flexDirection: 'row'
+          }}>
+            <Text style={[styles.desc, { marginRight: rowData.who ? 15 : 0 }]}>{rowData.who}</Text>
+            <Text style={styles.desc}>{rowData.publishedAt
+            && rowData.publishedAt.slice(0, 10)}</Text>
+          </View>
         </View>
-      </View>
+      </TouchableNativeFeedback>
     )
   }
 
@@ -131,6 +143,9 @@ class MainPage extends React.Component {
       return <ActivityIndicator/>
     }
     return <Text/>
+  }
+
+  _onItemClick(rowData) {
   }
 }
 
