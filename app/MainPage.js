@@ -1,19 +1,12 @@
 import React from 'react';
 
-import {
-  ListView, RefreshControl, ActivityIndicator, Text, View, ToolbarAndroid, StyleSheet
-} from 'react-native';
-import { window_color, default_primary_color, primary_text_dark_color } from "./color_palette";
+import { ActivityIndicator, ListView, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { primary_text_dark_color, window_color } from "./color_palette";
 
 const styles = StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: window_color,
-  },
-  toolbar: {
-    backgroundColor: default_primary_color,
-    height: 56,
-    alignSelf: 'stretch',
   },
   row: {
     margin: 10,
@@ -45,7 +38,6 @@ class MainPage extends React.Component {
   render() {
     return (
       <View style={styles.content}>
-        <ToolbarAndroid title="Gank" titleColor="white" style={styles.toolbar}/>
         <ListView enableEmptySections={true} refreshControl={(
           <RefreshControl refreshing={this.state.refreshing}
                           onRefresh={this._onRefresh.bind(this)}/>)}
@@ -54,7 +46,6 @@ class MainPage extends React.Component {
                   renderFooter={this._renderFooter.bind(this)}
                   onEndReached={this._onLoadMore.bind(this)}
         >
-
         </ListView>
       </View>
     )
