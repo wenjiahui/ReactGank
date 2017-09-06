@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { ActivityIndicator, ListView, RefreshControl, StyleSheet, Text, View } from 'react-native';
-import { primary_text_dark_color, window_color } from "./color_palette";
+import { primary_text_dark_color, divider_color, secondary_text_color } from "./color_palette";
 import { fetchGankCategoryList } from "./gankApi";
 
 const styles = StyleSheet.create({
@@ -9,9 +9,17 @@ const styles = StyleSheet.create({
     flex: 1
   },
   row: {
-    margin: 10,
     color: primary_text_dark_color,
-    fontSize: 15
+    fontSize: 15,
+    marginBottom: 10
+  },
+  desc: {
+    fontSize: 12,
+    color: secondary_text_color
+  },
+  divider: {
+    backgroundColor: divider_color,
+    height: 1
   }
 });
 
@@ -45,6 +53,9 @@ class MainPage extends React.Component {
                   dataSource={this.state.dataSource}
                   renderRow={this._renderRow}
                   renderFooter={this._renderFooter.bind(this)}
+                  renderSeparator={(sectionId, rowId) => {
+                    return <View key={rowId} style={styles.divider}/>
+                  }}
                   onEndReached={this._onLoadMore.bind(this)}
         >
         </ListView>
@@ -71,11 +82,6 @@ class MainPage extends React.Component {
           refreshing: false
         })
       });
-
-    // fetch('https://www.easy-mock.com/mock/5908a9a87a878d73716e7519/club/ba/activity/admin/apply/list_all')
-    // .then(response => response.json()) .then(responseJson => responseJson.applys) .then(applies
-    // => { this._data = this._data.concat(applies); this.setState({ refreshing: false, dataSource:
-    // ds.cloneWithRows(this._data) }) });
   }
 
   _onLoadMore() {
@@ -97,17 +103,27 @@ class MainPage extends React.Component {
           refreshing: false
         })
       });
-
-    // fetch('https://www.easy-mock.com/mock/5908a9a87a878d73716e7519/club/ba/activity/admin/apply/list_all')
-    // .then(response => response.json()) .then(responseJson => responseJson.applys) .then(applies
-    // => { this._data = this._data.concat(applies); this.setState({ loadMore: false, page:
-    // this.state.page + 1, dataSource: ds.cloneWithRows(this._data) }) });
   }
 
   _renderRow(rowData) {
-    return (<Text style={styles.row}>
-      {rowData.desc}
-    </Text>)
+    return (
+      <View style={{ padding: 10 }}>
+        <Text
+          numberOfLines={2}
+          fontWeight="bold"
+          ellipsizeMode="tail"
+          style={styles.row}>
+          {rowData.desc}
+        </Text>
+        <View style={{
+          flex: 1,
+          flexDirection: 'row'
+        }}>
+          <Text style={[styles.desc, { marginRight: rowData.who ? 15 : 0 }]}>{rowData.who}</Text>
+          <Text style={styles.desc}>{rowData.publishedAt && rowData.publishedAt.slice(0, 10)}</Text>
+        </View>
+      </View>
+    )
   }
 
   _renderFooter() {
