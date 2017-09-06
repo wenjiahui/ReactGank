@@ -2,11 +2,11 @@ import React from 'react';
 
 import { ActivityIndicator, ListView, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { primary_text_dark_color, window_color } from "./color_palette";
+import { fetchGankCategoryList } from "./gankApi";
 
 const styles = StyleSheet.create({
   content: {
-    flex: 1,
-    backgroundColor: window_color,
+    flex: 1
   },
   row: {
     margin: 10,
@@ -25,6 +25,7 @@ class MainPage extends React.Component {
     super(pros);
 
     this.state = {
+      page: 1,
       refreshing: true,
       loadMore: false,
       dataSource: ds.cloneWithRows(this._data)
@@ -56,37 +57,56 @@ class MainPage extends React.Component {
       refreshing: true
     })
 
-    fetch('https://www.easy-mock.com/mock/5908a9a87a878d73716e7519/club/ba/activity/admin/apply/list_all')
-      .then(response => response.json())
-      .then(responseJson => responseJson.applys)
-      .then(applies => {
-        this._data = this._data.concat(applies);
+    fetchGankCategoryList(this.props.name, 0)
+      .then(responseJson => responseJson.results)
+      .then(results => {
+        this._data = this._data.concat(results);
         this.setState({
           refreshing: false,
+          page: 1,
           dataSource: ds.cloneWithRows(this._data)
         })
+      }, error => {
+        this.setState({
+          refreshing: false
+        })
       });
+
+    // fetch('https://www.easy-mock.com/mock/5908a9a87a878d73716e7519/club/ba/activity/admin/apply/list_all')
+    // .then(response => response.json()) .then(responseJson => responseJson.applys) .then(applies
+    // => { this._data = this._data.concat(applies); this.setState({ refreshing: false, dataSource:
+    // ds.cloneWithRows(this._data) }) });
   }
 
   _onLoadMore() {
     this.setState({
       loadMore: true
     })
-    fetch('https://www.easy-mock.com/mock/5908a9a87a878d73716e7519/club/ba/activity/admin/apply/list_all')
-      .then(response => response.json())
-      .then(responseJson => responseJson.applys)
-      .then(applies => {
-        this._data = this._data.concat(applies);
+
+    fetchGankCategoryList(this.props.name, this.state.page)
+      .then(responseJson => responseJson.results)
+      .then(results => {
+        this._data = this._data.concat(results);
         this.setState({
           loadMore: false,
+          page: this.state + 1,
           dataSource: ds.cloneWithRows(this._data)
         })
+      }, error => {
+        this.setState({
+          refreshing: false
+        })
       });
+
+    // fetch('https://www.easy-mock.com/mock/5908a9a87a878d73716e7519/club/ba/activity/admin/apply/list_all')
+    // .then(response => response.json()) .then(responseJson => responseJson.applys) .then(applies
+    // => { this._data = this._data.concat(applies); this.setState({ loadMore: false, page:
+    // this.state.page + 1, dataSource: ds.cloneWithRows(this._data) }) });
   }
 
   _renderRow(rowData) {
     return (<Text style={styles.row}>
-      {rowData.user.nick}
+      {rowData.desc}
     </Text>)
   }
 
