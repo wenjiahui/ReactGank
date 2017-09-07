@@ -1,21 +1,10 @@
 import React from 'react';
 
 import {
-  ActivityIndicator,
-  ListView,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  View,
-  ToastAndroid,
-  TouchableNativeFeedback
+  ActivityIndicator, ListView, RefreshControl, StyleSheet, Text, View, TouchableNativeFeedback
 } from 'react-native';
 import { primary_text_dark_color, divider_color, secondary_text_color } from "./color_palette";
 import { fetchGankCategoryList } from "./gankApi";
-import WebViewPage from './WebViewPage';
-import {
-  StackNavigator,
-} from 'react-navigation';
 
 const styles = StyleSheet.create({
   content: {
@@ -150,7 +139,6 @@ class MainPage extends React.Component {
   }
 
   _onItemClick(rowData) {
-    ToastAndroid.show(rowData.who, ToastAndroid.SHORT);
     const { navigate } = this.props.navigation;
     navigate('WebView', { info: rowData })
   }
