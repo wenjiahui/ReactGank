@@ -5,22 +5,19 @@
  */
 
 import React, { Component } from 'react';
-import { AppRegistry, StatusBar, StyleSheet, ToolbarAndroid, View } from 'react-native';
+import { AppRegistry, StatusBar, StyleSheet, View, Navigator } from 'react-native';
+import { StackNavigator } from 'react-navigation';
 import TabbedViewPager from 'react-native-tabbed-view-pager-android';
 import {
   accent_color, dark_primary_color, default_primary_color, window_color
 } from "./app/color_palette";
 import MainPage from './app/MainPage';
+import WebViewPage from "./app/WebViewPage";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: window_color
-  },
-  toolbar: {
-    backgroundColor: default_primary_color,
-    height: 56,
-    alignSelf: 'stretch',
   },
   viewPager: {
     flex: 1
@@ -28,6 +25,12 @@ const styles = StyleSheet.create({
 });
 
 export default class RootPage extends Component {
+
+  static navigationOptions = {
+    title: 'Gank',
+    headerTintColor: 'white',
+    headerStyle: { backgroundColor: default_primary_color }
+  };
 
   constructor(props) {
     super(props)
@@ -40,7 +43,6 @@ export default class RootPage extends Component {
     return (
       <View style={styles.container}>
         <StatusBar backgroundColor={dark_primary_color}/>
-        <ToolbarAndroid style={styles.toolbar} titleColor={'white'} title='Gank'/>
         <TabbedViewPager
           tabMode={"fixed"}
           tabGravity={"center"}
@@ -56,7 +58,7 @@ export default class RootPage extends Component {
           onPageSelected={(event) => this.onPageSelected(event.nativeEvent.position)}>
           {this.state.tabNames.map((tabName) => {
             return (
-              <MainPage name={tabName} key={tabName}/>
+              <MainPage navigation={this.props.navigation} name={tabName} key={tabName}/>
             )
           })}
         </TabbedViewPager>
@@ -69,4 +71,10 @@ export default class RootPage extends Component {
   }
 }
 
-AppRegistry.registerComponent('ReactGank', () => RootPage);
+const SimpleApp = StackNavigator({
+  Root: { screen: RootPage },
+  MainPage: { screen: MainPage },
+  WebView: { screen: WebViewPage },
+});
+
+AppRegistry.registerComponent('ReactGank', () => SimpleApp);
